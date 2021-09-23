@@ -39,7 +39,7 @@ for rw in df_target_profiles.iterrows():
               lst_postncomments)
   except exceptions.TemporarilyBanned:
     print("\nTemporarily Banned!")
-    print("stopped in commenter id {}".format(com_id))
+    print("stopped in account id {}".format(rw[1]['account']))
     break
   except:
     df_target_profiles.at[rw[0], 'getPosts'] = -1
