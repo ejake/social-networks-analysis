@@ -84,5 +84,5 @@ if __name__ == "__main__":
     # Load Input data
     df_target_profiles = pd.read_excel(DATA_URL)
     print(df_target_profiles.info())
-    print(load_credentials())
+    scrap_comments(load_credentials())
     print("###...Scraping finished successfully...###")
