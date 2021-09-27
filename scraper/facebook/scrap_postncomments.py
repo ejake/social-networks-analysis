@@ -13,9 +13,9 @@ import numpy as np
 DATA_URL = 'https://drive.google.com/uc?export=download&id=1Go5E3o7WGOINEGScblOnwiJQMbsxo5h9'
 INPUT_TARGET = 'target_profiles.xlsx'
 # OUTPUT PATH
-OUTPUT_PATH = './'
+OUTPUT_PATH = '/home/administrador/output-facebook/'
 # CREDENTIALS
-FBLOGINS_PATH = './scraper/facebook/fb_accounts.json'
+FBLOGINS_PATH = './fb_accounts.json'
 # PARAMETERS
 PAGES = 100
 
@@ -38,8 +38,9 @@ def load_credentials():
 def scrap_comments(accounts = []):
   # Scrap post and commnents
   print('Scraping...')
+  interruptions = 0
   lst_postncomments = []
-  for rw in tqdm(df_target_profiles.iloc[-13:].iterrows()):  
+  for rw in tqdm(df_target_profiles.iloc[-9:].iterrows()):  
     lst_tg = []
     print(rw[1]['account'])
     try:
@@ -56,25 +57,32 @@ def scrap_comments(accounts = []):
                           extra_info=True, 
                           options={"comments": True})
 
-      for post in posts:
+      for post in tqdm(posts):
         lst_postncomments.append(post)
         lst_tg.append(post)
-        time.sleep(random.randint(1,5))
+      
+      time.sleep(random.randint(1,5))
       df_target_profiles.at[rw[0], 'getPosts'] = 1
       df_target_profiles.at[rw[0], 'getComments'] = 1
       save_data(OUTPUT_PATH + 'post_comments_' + rw[1]['account'], lst_tg)
     except exceptions.TemporarilyBanned:
       print("\nTemporarily Banned!")
       print("stopped in posts of id {}".format(rw[1]['account']))
-      time.sleep(370)
+      #time.sleep(3700)
+      interruptions += 1
+      break
     except exceptions.AccountDisabled:
       print("\Account Disiabled")
       print("stopped in posts of id {}".format(rw[1]['account']))
       break
-    except:
-      print("Exception scraping posts of id {}".format(rw[1]['account']))
-      df_target_profiles.at[rw[0], 'getPosts'] = -1
-      df_target_profiles.at[rw[0], 'getComments'] = -1
+    except exceptions.LoginError:
+      print("\Login Error")
+      print("with account {}".format(accounts[rdm_account]))
+    #except:
+     # print("Exception scraping posts of id {}".format(rw[1]['account']))
+     # df_target_profiles.at[rw[0], 'getPosts'] = -1
+     # df_target_profiles.at[rw[0], 'getComments'] = -1
+     # interruptions += 1
     finally:
       save_data(OUTPUT_PATH + 'postncomments', lst_postncomments)
 
