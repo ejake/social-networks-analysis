@@ -40,7 +40,7 @@ def scrap_comments(accounts = []):
   print('Scraping...')
   interruptions = 0
   lst_postncomments = []
-  for rw in tqdm(df_target_profiles.iloc[-9:].iterrows()):  
+  for rw in tqdm(df_target_profiles.iloc[-8:].iterrows()):  
     lst_tg = []
     print(rw[1]['account'])
     try:
