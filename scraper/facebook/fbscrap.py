@@ -10,7 +10,7 @@ class FBScraper:
         # CREDENTIALS
         self.FBLOGINS_PATH = './fb_accounts.json'
         self.DEMO_ACCOUNT = 'MyPharmacistHouse'
-        self.accounts = load_credentials()
+        self.accounts = self.load_credentials()
         
 
     def load_credentials(self):
@@ -21,8 +21,11 @@ class FBScraper:
     
     def scrap_posts(self):
         rdm_account = random.randint(0, len(self.accounts)-1)        
+        lst_posts =  []
         posts = get_posts(self.DEMO_ACCOUNT, 
                           pages = 2, 
                           extra_info=True, 
                           credentials=self.accounts[rdm_account])
-        return posts
+        for po in posts:
+            lst_posts.append(po)
+        return lst_posts

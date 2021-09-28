@@ -1,15 +1,17 @@
-#import gdown
+from tqdm import tqdm
 import pandas as pd
 from facebook_scraper import get_profile
 from facebook_scraper import exceptions
 import json, time, random
+
+from fbscrap import FBScraper
 
 DIRECT_DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id=1kOT1xCZ6NEkEmPaqfpmfoTok30Vqd-2K'
 OUTPUT_DATA = 'profiles_data_'
 
 def read_ids():
     df = pd.read_csv(DIRECT_DOWNLOAD_URL, names=['commenter_id'])
-    print(df_profiles.info())
+    print(df.info())
     return df
 
 
@@ -34,8 +36,10 @@ def save_profiles(list_data):
 
 if __name__ == "__main__":
     df_profiles = read_ids()
-    ids = df_profiles.commenter_id.unique()
-    list_profiles = []
-    for id in ids:
-        list_profiles.append(scrap_profile(id))
+    fb = FBScraper()
+    if len(fb.scrap_posts()) > 0:
+        ids = df_profiles.commenter_id.unique()
+        list_profiles = []
+        for id in tqdm(ids):
+            list_profiles.append(scrap_profile(id))
     save_profiles(list_profiles)

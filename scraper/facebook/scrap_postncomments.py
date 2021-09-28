@@ -58,6 +58,7 @@ def scrap_comments(accounts = []):
                           options={"comments": True})
 
       for post in tqdm(posts):
+        time.sleep(random.randint(1,4))
         lst_postncomments.append(post)
         lst_tg.append(post)
       
