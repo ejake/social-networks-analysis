@@ -1,0 +1,6 @@
+selenium
+googlenews
+pytorch
+tensorflow
+transformers
+pandas
