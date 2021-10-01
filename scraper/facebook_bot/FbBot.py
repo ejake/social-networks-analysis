@@ -3,6 +3,7 @@
 import re
 import ast
 import time
+import json
 import random
 import requests
 import datetime
@@ -37,6 +38,7 @@ googlenews = GoogleNews(lang = 'en', region = 'CO')
 class FbBot:
     def __init__(self, transformer=True) -> None:
         self.fb = FBScraper()
+        self.conf_param = json.load(open('./facebook_bot/config.json', 'r'))
         if transformer:
             self.speach_blenderbot()
     
@@ -44,14 +46,14 @@ class FbBot:
     def launch_chrome(self):         
         options = Options()
         options.add_argument("--incognito")
-        self.browser = webdriver.Chrome("E:\\Documents\\Projects\\Cloud\\browser_drivers\\chromedriver.exe", options = options)
+        self.browser = webdriver.Chrome(self.conf_param['driver_chrome'], options = options)
         
         return self.browser
 
     def launch_firefox(self):         
         options = Options()
         options.add_argument("--incognito")
-        self.browser = webdriver.Chrome("E:\\Documents\\Projects\\Cloud\\browser_drivers\\geckodriver.exe", options = options)
+        self.browser = webdriver.Chrome(self.conf_param['driver_firefox'], options = options)
         
         return self.browser
     
