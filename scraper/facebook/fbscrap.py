@@ -8,7 +8,7 @@ class FBScraper:
 
     def __init__(self):
         # CREDENTIALS
-        self.FBLOGINS_PATH = './fb_accounts.json'
+        self.FBLOGINS_PATH = './facebook/fb_accounts.json'
         self.DEMO_ACCOUNT = 'MyPharmacistHouse'
         self.accounts = self.load_credentials()
         
