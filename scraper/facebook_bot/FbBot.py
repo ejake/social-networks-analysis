@@ -46,6 +46,7 @@ class FbBot:
     def launch_chrome(self):         
         options = Options()
         options.add_argument("--incognito")
+        options.add_argument('headless')
         self.browser = webdriver.Chrome(self.conf_param['driver_chrome'], options = options)
         
         return self.browser
