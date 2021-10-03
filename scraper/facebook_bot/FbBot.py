@@ -43,10 +43,11 @@ class FbBot:
             self.speach_blenderbot()
     
     # Open account 
-    def launch_chrome(self):         
+    def launch_chrome(self, open_browser = False):         
         options = Options()
         options.add_argument("--incognito")
-        options.add_argument('headless')
+        if not open_browser:
+            options.add_argument('headless')
         self.browser = webdriver.Chrome(self.conf_param['driver_chrome'], options = options)
         
         return self.browser
@@ -65,9 +66,9 @@ class FbBot:
             time.sleep(n)
             element.send_keys(char)
 
-    def FB_account_opener(self, username, password): 
+    def FB_account_opener(self, username, password, open_browser = False): 
         # Open browser
-        self.browser = self.launch_chrome()
+        self.browser = self.launch_chrome(open_browser)
         
         # Navigate to mobile facebook 
         self.browser.get("https://m.facebook.com/")
