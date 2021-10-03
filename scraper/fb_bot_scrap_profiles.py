@@ -41,6 +41,25 @@ def open_account(fb_bot):
 
     return user
 
+def random_action(fb, user):
+    #try:
+    if (random.random() < 0.5):
+        print("Scrolling...")
+        fb.scrolling_bot(user) # Scrolling
+
+    if random.random() < 0.2:
+        print("Liking...")
+        fb.liking_bot(user) # Liking
+
+    if random.random() < 0.01:                                                                                                                                                      print("Sharing...")
+        print("Sharing")
+        fb.sharing_bot(user) # Sharing
+        #if random.random() < 0.001
+            #print('Posting...')
+            #fb.posting_bot(user)
+    #except:
+    #    print("Error executing action on FB")
+
 
 if __name__ == "__main__":
     df_profiles = read_ids()
@@ -63,17 +82,14 @@ if __name__ == "__main__":
                 time.sleep(delay_s)
                 print('Resuming scraping...')
             else:
-                if random.random() < 0.5:
-                    print("Scrolling...")
-                    fb.scrolling_bot(user)
-                else:
-                    if (iters % 30 == 0) and (random.random() < 0.8):
-                        #user.quit()
-                        delay_s =  random.randint(100, 1000)
-                        print('Waiting {} seconds to escape banning'.format(delay_s))
-                        time.sleep(delay_s)
-                        print('Resuming scraping...')
-                        #user = open_accont(fb)                    
+                random_action(fb, user)
+            if (iters % 20 == 0) and (random.random() < 0.95):
+                #user.quit()
+                delay_s =  random.randint(100, 1000)
+                print('Waiting {} seconds to escape banning'.format(delay_s))
+                time.sleep(delay_s)
+                print('Resuming scraping...')
+                #user = open_accont(fb)                    
         except AttributeError:
             print("\nFail scraping {} in iteration {}".format(id, iters))
             exception_iters +=1
@@ -82,7 +98,7 @@ if __name__ == "__main__":
                 print('Waiting 1 hour for banning')
                 time.sleep(3600)
                 user = open_account(fb)
-            if exception_iters > 9:
+            if exception_iters > 5:
                 print("\n6 consecutive exceptions reached, aborting execution")
                 break
             #user.quit()
