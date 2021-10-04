@@ -68,7 +68,7 @@ if __name__ == "__main__":
     user = open_account(fb)   
     iters = 0
     exception_iters  = 0
-    start = 171
+    start = 175
     ids = df_profiles.commenter_id.unique()
     for id in tqdm(ids[start:]):
         try:
