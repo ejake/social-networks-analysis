@@ -41,24 +41,25 @@ def open_account(fb_bot):
 
     return user
 
-def random_action(fb, user):
-    #try:
-    if (random.random() < 0.5):
-        print("Scrolling...")
-        fb.scrolling_bot(user) # Scrolling
+def random_action(fb_bot, user):
+    try:
+        if (random.random() < 0.5):
+            print("Scrolling...")
+            fb_bot.scrolling_bot(user) # Scrolling
 
-    if random.random() < 0.2:
-        print("Liking...")
-        fb.liking_bot(user) # Liking
+        if random.random() < 0.2:
+            print("Liking...")
+            fb_bot.liking_bot(user) # Liking
 
-    if random.random() < 0.01:                                                                                                                                                      print("Sharing...")
-        print("Sharing")
-        fb.sharing_bot(user) # Sharing
+        if random.random() < 0.01: 
+            print("Sharing")
+            fb_bot.sharing_bot(user) # Sharing
         #if random.random() < 0.001
             #print('Posting...')
             #fb.posting_bot(user)
-    #except:
-    #    print("Error executing action on FB")
+    except:
+        print("Error executing action on FB")
+
 
 
 if __name__ == "__main__":
