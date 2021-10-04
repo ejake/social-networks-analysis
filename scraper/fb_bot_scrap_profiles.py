@@ -20,7 +20,7 @@ def read_ids():
 
 
 def scrap_profile(browser, id):    
-    time.sleep(random.randint(2,5))
+    time.sleep(random.randint(5,45))
     profile_data = fbs.profile_scraper(user, ABOUT_URL.format(id)) 
     
     return profile_data
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                 print('Resuming scraping...')
             else:
                 random_action(fb, user)
-            if (iters % 20 == 0) and (random.random() < 0.95):
+            if (iters % 10 == 0) and (random.random() < 0.95):
                 #user.quit()
                 delay_s =  random.randint(100, 1000)
                 print('Waiting {} seconds to escape banning'.format(delay_s))
