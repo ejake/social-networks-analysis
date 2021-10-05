@@ -12,7 +12,7 @@ class FBScraper:
         self.DEMO_ACCOUNT = 'MyPharmacistHouse'
         self.accounts = self.load_credentials()
 
-    def get_credentiasls(account):
+    def get_credentiasls(self, account):
         credentials = []
         if "account" in account:
             credentials.append(account["account"])
@@ -25,7 +25,7 @@ class FBScraper:
     def load_credentials(self):
         with open(self.FBLOGINS_PATH, 'r') as f:
             credentials = json.load(f)
-        accounts = list(map(get_credentials, credentials["accounts"]))
+        accounts = list(map(self.get_credentials, credentials["accounts"]))
         return accounts
     
     def scrap_posts(self):
