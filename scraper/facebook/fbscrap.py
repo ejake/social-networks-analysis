@@ -12,7 +12,7 @@ class FBScraper:
         self.DEMO_ACCOUNT = 'MyPharmacistHouse'
         self.accounts = self.load_credentials()
 
-    def get_credentiasls(self, account):
+    def get_credentials(self, account):
         credentials = []
         if "account" in account:
             credentials.append(account["account"])
