@@ -11,6 +11,7 @@ DIRECT_DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id=1kOT1xCZ6N
 OUTPUT_DATA = '/home/administrador/output-facebook/profile_{}_data_{}.json'
 
 ABOUT_URL = 'https://m.facebook.com/{}/about'
+#ABOUT_URL = 'https://m.facebook.com/{}/about?lst=100073194427747%3A100001483860077%3A1634123545&ref=m_notif&notif_t=group_recommendation'
 
 def read_ids():
     df = pd.read_csv(DIRECT_DOWNLOAD_URL, names=['commenter_id'])
@@ -60,6 +61,15 @@ def random_action(fb_bot, user):
     except:
         print("Error executing action on FB")
 
+def check_time(start, duration = 4):
+    """
+    Duration (hours)
+    """
+    flag_break = False
+    if (time.time() - start) > (duration*3600):
+        flag_break = True
+
+    return flag_break
 
 
 if __name__ == "__main__":
@@ -68,15 +78,20 @@ if __name__ == "__main__":
     user = open_account(fb)   
     iters = 0
     exception_iters  = 0
-    start = 175
+    start = 3673
     ids = df_profiles.commenter_id.unique()
+    start_time =  time.time()
     for id in tqdm(ids[start:]):
         try:
             print("{}: Scraping {} profile".format(iters, id))
             profile = scrap_profile(user, id)
             save_profiles(profile, id)
             iters += 1
-            exception_iters = 0           
+            exception_iters = 0
+            if check_time(start_time, 1):
+                print("Stopping process, elapsing time longer than 1 hour")
+                user.quit()
+                break
             if iters % 10 == 0:
                 delay_s = random.randint(1, 100)
                 print('Waiting {} seconds to escape banning'.format(delay_s))
@@ -84,9 +99,9 @@ if __name__ == "__main__":
                 print('Resuming scraping...')
             else:
                 random_action(fb, user)
-            if (iters % 10 == 0) and (random.random() < 0.95):
+            if (iters % 20 == 0) and (random.random() < 0.95):
                 #user.quit()
-                delay_s =  random.randint(100, 1000)
+                delay_s =  random.randint(10, 1000)
                 print('Waiting {} seconds to escape banning'.format(delay_s))
                 time.sleep(delay_s)
                 print('Resuming scraping...')
@@ -101,6 +116,12 @@ if __name__ == "__main__":
                 user = open_account(fb)
             if exception_iters > 5:
                 print("\n6 consecutive exceptions reached, aborting execution")
+                break
+        except IndexError:
+            print("IndexError: skipping {} in iteration {}".format(id, iters))
+            exception_iters += 1
+            if exception_iters > 3:
+                print("More than 3 consecutive exceptions, aboriting execution")
                 break
             #user.quit()
     #user.quit()
