@@ -11,12 +11,21 @@ class FBScraper:
         self.FBLOGINS_PATH = './facebook/fb_accounts.json'
         self.DEMO_ACCOUNT = 'MyPharmacistHouse'
         self.accounts = self.load_credentials()
-        
+
+    def get_credentials(self, account):
+        credentials = []
+        if "account" in account:
+            credentials.append(account["account"])
+        elif "email" in account:
+            credentials.append(account["email"])
+        if "password" in account:
+            credentials.append(account["password"])
+        return tuple(credentials)
 
     def load_credentials(self):
         with open(self.FBLOGINS_PATH, 'r') as f:
             credentials = json.load(f)
-        accounts = list(map(lambda x: tuple(x.values()), credentials["accounts"]))
+        accounts = list(map(self.get_credentials, credentials["accounts"]))
         return accounts
     
     def scrap_posts(self):
