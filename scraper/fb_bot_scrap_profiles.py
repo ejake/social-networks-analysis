@@ -44,7 +44,7 @@ def open_account(fb_bot):
 
 def random_action(fb_bot, user):
     try:
-        if (random.random() < 0.5):
+        if (randoYm.random() < 0.5):
             print("Scrolling...")
             fb_bot.scrolling_bot(user) # Scrolling
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     user = open_account(fb)   
     iters = 0
     exception_iters  = 0
-    start = 3673
+    start = 10970
     ids = df_profiles.commenter_id.unique()
     start_time =  time.time()
     for id in tqdm(ids[start:]):
@@ -101,7 +101,7 @@ if __name__ == "__main__":
                 random_action(fb, user)
             if (iters % 20 == 0) and (random.random() < 0.95):
                 #user.quit()
-                delay_s =  random.randint(10, 1000)
+                delay_s =  random.randint(10, 400)
                 print('Waiting {} seconds to escape banning'.format(delay_s))
                 time.sleep(delay_s)
                 print('Resuming scraping...')
@@ -111,8 +111,8 @@ if __name__ == "__main__":
             exception_iters +=1
             if exception_iters > 3:
                 user.quit()
-                print('Waiting 1 hour for banning')
-                time.sleep(3600)
+                print('Waiting 1/2 hour for banning')
+                time.sleep(1800)
                 user = open_account(fb)
             if exception_iters > 5:
                 print("\n6 consecutive exceptions reached, aborting execution")
