@@ -1,7 +1,7 @@
 import random
 import json
 from facebook_scraper import get_posts
-from facebook_scraper import exceptions
+#from facebook_scraper import exceptions
 
 
 class FBScraper:    
