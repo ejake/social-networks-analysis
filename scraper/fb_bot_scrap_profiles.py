@@ -44,7 +44,7 @@ def open_account(fb_bot):
 
 def random_action(fb_bot, user):
     try:
-        if (randoYm.random() < 0.5):
+        if (random.random() < 0.5):
             print("Scrolling...")
             fb_bot.scrolling_bot(user) # Scrolling
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     user = open_account(fb)   
     iters = 0
     exception_iters  = 0
-    start = 10970
+    start = 11275
     ids = df_profiles.commenter_id.unique()
     start_time =  time.time()
     for id in tqdm(ids[start:]):
@@ -88,8 +88,8 @@ if __name__ == "__main__":
             save_profiles(profile, id)
             iters += 1
             exception_iters = 0
-            if check_time(start_time, 1):
-                print("Stopping process, elapsing time longer than 1 hour")
+            if check_time(start_time, 0.75):
+                print("Stopping process, elapsing time longer than 3/4 hour")
                 user.quit()
                 break
             if iters % 10 == 0:
