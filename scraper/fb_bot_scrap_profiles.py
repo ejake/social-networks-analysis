@@ -85,6 +85,7 @@ if __name__ == "__main__":
         try:
             print("{}: Scraping {} profile".format(iters, id))
             profile = scrap_profile(user, id)
+            profile["account_id"] = id
             save_profiles(profile, id)
             iters += 1
             exception_iters = 0
