@@ -13,6 +13,7 @@ DIRECT_DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id='
 COMMENTS_URL = DIRECT_DOWNLOAD_URL + '1e-YnGo2oZeH8wUrJrenpQpBJyhOUf0DZ'
 
 df_comments = pd.read_csv(COMMENTS_URL)
+df_comments =  df_comments.drop_duplicates('comment_id')
 print(df_comments.info())
 
 # 0-shot learning model
@@ -44,6 +45,7 @@ def apply_0classifier(df, column_text, labels, hypothesis_template):
     
     return df
   
+"""
 apply_0classifier(df_comments, 
                   'comment_text', 
                   candidate_labels_0, 
@@ -52,7 +54,7 @@ apply_0classifier(df_comments,
 df_comments.to_csv(OUTPUT_PATH.format('comments1_classified_0shot_20211105.csv'),
                    index=False)
 print(df_comments.info())
-
+"""
 apply_0classifier(df_comments, 
                   'comment_text', 
                   candidate_labels_1, 
