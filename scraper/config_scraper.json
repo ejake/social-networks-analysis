@@ -15,10 +15,10 @@
     "facebook" : {
         "ABOUT_URL" : "https://m.facebook.com/{}/about",
         "FB_URL" : "https://m.facebook.com/",
-        "auto_author" : false,        
+        "auto_author" : false,
         "open_browser" : false,
         "download_image" : true,
-        "download_data": true, 
+        "download_data": false, 
         "timer_hours" : 0
     }
 

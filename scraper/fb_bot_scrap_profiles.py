@@ -10,13 +10,6 @@ import json, time, random
 import requests
 import shutil
 
-#from fbscrap import FBScraper
-
-#DIRECT_DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id=1kOT1xCZ6NEkEmPaqfpmfoTok30Vqd-2K'
-#OUTPUT_DATA = '/home/administrador/output-facebook/profile_{}_data_{}.json'
-
-#ABOUT_URL = 'https://m.facebook.com/{}/about'
-#ABOUT_URL = 'https://m.facebook.com/{}/about?lst=100073194427747%3A100001483860077%3A1634123545&ref=m_notif&notif_t=group_recommendation'
 
 def read_ids(csv_url, id_column):
     df = pd.read_csv(csv_url, names=[id_column])
@@ -33,7 +26,7 @@ def scrap_profile(browser, id, url_prefix):
 
 def scrap_profile_image(browser, id, url_prefix):    
     time.sleep(random.randint(5,45))
-    url_image = fbs.image_profile_scraper(browser, url_prefix.format(id)) 
+    url_image = fbs.image_profile_scraper(browser, url_prefix+id) 
 
     return url_image
 
@@ -47,6 +40,7 @@ def save_profiles(list_data, id, path_prefix):
         json.dump(list_data, fp)
 
 def save_profile_image(url_pic, id, **kwargs):
+    print(url_pic)
     r = requests.get(url_pic, stream = True)
     filename = './temp_image_profile.jpg'
     output_file_name = kwargs['file_name'].format(str(id),
@@ -60,9 +54,9 @@ def save_profile_image(url_pic, id, **kwargs):
         with open(filename,'wb') as f:
             shutil.copyfileobj(r.raw, f)
 
-        if kwargs["blob"]:
+        if kwargs["blobstorage"]:
             dest = "{}/{}".format(kwargs['sink_folder'], output_file_name)
-            kwargs["blob"].upload_file(filename, dest)
+            kwargs["blobstorage"].upload_file(filename, dest)
     else:
         print("Image can't be retreived")
 
@@ -119,7 +113,7 @@ if __name__ == "__main__":
     df_profiles = read_ids(conf_param['input']['DIRECT_DOWNLOAD_URL'], 
                            conf_param['input']['profile_id_column'])
     # 3. Initiate Scraper bot
-    if conf_param['facebook']['autho_author']:
+    if conf_param['facebook']['auto_author']:
         fb = FbBot(transformer = True)
     else:
         fb = FbBot(transformer = False)
@@ -136,7 +130,7 @@ if __name__ == "__main__":
     start_time =  time.time()
 
     #for id in tqdm(ids[start:]):
-    for id in tqdm(ids[:4]):
+    for id in tqdm(ids[1:10]):
         try:            
             if conf_param['facebook']['download_data']:# Scrap profile data
                 print("{}: Scraping {} profile data".format(iters, id))
@@ -145,7 +139,7 @@ if __name__ == "__main__":
                 save_profiles(profile, id, conf_param['output']['LOCAL_FILE'])
             if conf_param['facebook']['download_image']:# Scrap profile image
                 print("{}: Scraping {} profile image".format(iters, id))
-                image_url = scrap_profile_image(user, id, conf_param['output']['FB_URL'])
+                image_url = scrap_profile_image(user, id, conf_param['facebook']['FB_URL'])
                 if conf_param['output']['local']:
                     if conf_param['output']['AZURE']:
                         save_profile_image(image_url, id, 
@@ -203,5 +197,4 @@ if __name__ == "__main__":
                 break
             #user.quit()
     #user.quit()
-
 
