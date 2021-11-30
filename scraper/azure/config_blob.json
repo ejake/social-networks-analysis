@@ -1,6 +1,6 @@
 {
 	"STORAGEACCOUNTNAME" : "dlsdanemodsfc",
-    "STORAGEACCOUNTKEY" : "5mimQXDtm67X+dA0IYceAgq0Sy8OrGt2ky/Dnh3MUIHNCCDQZ1D8Jj2foihRscnlvYek/SbRHTFVXyBTKfFIug==",
+    "STORAGEACCOUNTKEY" : "",
     "CONTAINERNAME" : "socialnetworks-data",
     "BLOBNAME" : "fb_profiles",
     "BLOBNAME-IMAGES" : "fb_profiles_images"
