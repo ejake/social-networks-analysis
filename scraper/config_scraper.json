@@ -1,0 +1,25 @@
+{
+    "input" : {
+        "DIRECT_DOWNLOAD_URL" : "https://drive.google.com/uc?export=download&id=1kOT1xCZ6NEkEmPaqfpmfoTok30Vqd-2K",
+        "profile_id_column" : "commenter_id"
+    },    
+    "output" : {
+        "AZURE" : true,
+        "local" : true,
+        "LOCAL_PATH" : "/home/administrador/output-facebook/",
+        "LOCAL_FILE" : "/home/administrador/output-facebook/profile_{}_data_{}.json",
+        "OUTPUT_FILE" : "profile_{}_data_{}.json",
+        "OUTPUT_IMAGE" : "profile_{}_pic_{}.jpg",
+        "OUTPUT_IMAGE_INFER" : "profile_{}_pic_data_by_{}_{}.json"
+    },
+    "facebook" : {
+        "ABOUT_URL" : "https://m.facebook.com/{}/about",
+        "FB_URL" : "https://m.facebook.com/",
+        "auto_author" : false,        
+        "open_browser" : false,
+        "download_image" : true,
+        "download_data": true, 
+        "timer_hours" : 0
+    }
+
+}
