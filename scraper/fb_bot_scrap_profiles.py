@@ -1,43 +1,76 @@
 from facebook_bot.FbBot import FbBot
 import facebook_bot.FbScraper as fbs
 
+from azure.BlobStorage import BlobStorage
+
 from tqdm import tqdm
 import pandas as pd
 import json, time, random
 
+import requests
+import shutil
+
 #from fbscrap import FBScraper
 
-DIRECT_DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id=1kOT1xCZ6NEkEmPaqfpmfoTok30Vqd-2K'
-OUTPUT_DATA = '/home/administrador/output-facebook/profile_{}_data_{}.json'
+#DIRECT_DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id=1kOT1xCZ6NEkEmPaqfpmfoTok30Vqd-2K'
+#OUTPUT_DATA = '/home/administrador/output-facebook/profile_{}_data_{}.json'
 
-ABOUT_URL = 'https://m.facebook.com/{}/about'
+#ABOUT_URL = 'https://m.facebook.com/{}/about'
 #ABOUT_URL = 'https://m.facebook.com/{}/about?lst=100073194427747%3A100001483860077%3A1634123545&ref=m_notif&notif_t=group_recommendation'
 
-def read_ids():
-    df = pd.read_csv(DIRECT_DOWNLOAD_URL, names=['commenter_id'])
-    df = df.astype({'commenter_id' : str})
+def read_ids(csv_url, id_column):
+    df = pd.read_csv(csv_url, names=[id_column])
+    df = df.astype({id_column : str})
     print(df.info())
     return df
 
 
-def scrap_profile(browser, id):    
+def scrap_profile(browser, id, url_prefix):    
     time.sleep(random.randint(5,45))
-    profile_data = fbs.profile_scraper(user, ABOUT_URL.format(id)) 
+    profile_data = fbs.profile_scraper(browser, url_prefix.format(id)) 
     
     return profile_data
 
-def save_profiles(list_data, id):
+def scrap_profile_image(browser, id, url_prefix):    
+    time.sleep(random.randint(5,45))
+    url_image = fbs.image_profile_scraper(browser, url_prefix.format(id)) 
+
+    return url_image
+
+def save_profiles(list_data, id, path_prefix):
     with open(
-        OUTPUT_DATA.format( str(id),
+        path_prefix.format( str(id),
             str(time.localtime()[0]) + \
                 str(time.localtime()[1]) + \
                     str(time.localtime()[2])),
                     'w') as fp:
         json.dump(list_data, fp)
 
-def open_account(fb_bot):
+def save_profile_image(url_pic, id, **kwargs):
+    r = requests.get(url_pic, stream = True)
+    filename = './temp_image_profile.jpg'
+    output_file_name = kwargs['file_name'].format(str(id),
+                                                  str(time.localtime()[0]) + \
+                                                      str(time.localtime()[1]) + \
+                                                          str(time.localtime()[2]))
+    if kwargs["local_path"]:
+        filename = "{}{}".format(kwargs["local_path"], output_file_name)
+    if r.status_code == 200: #  image retrieved successfully
+        r.raw.decode_content = True
+        with open(filename,'wb') as f:
+            shutil.copyfileobj(r.raw, f)
+
+        if kwargs["blob"]:
+            dest = "{}/{}".format(kwargs['sink_folder'], output_file_name)
+            kwargs["blob"].upload_file(filename, dest)
+    else:
+        print("Image can't be retreived")
+
+def open_account(fb_bot, open_browser = False):
     rdm_account = random.randint(0, len(fb_bot.fb.accounts)-1)
-    user = fb_bot.FB_account_opener(fb_bot.fb.accounts[rdm_account][0], fb_bot.fb.accounts[rdm_account][1])
+    user = fb_bot.FB_account_opener(username = fb_bot.fb.accounts[rdm_account][0], 
+                                    password = fb_bot.fb.accounts[rdm_account][1],
+                                    open_browser = open_browser)
     print("Using {} Facebook account".format(fb_bot.fb.accounts[rdm_account][0]))
 
     return user
@@ -73,20 +106,64 @@ def check_time(start, duration = 4):
 
 
 if __name__ == "__main__":
-    df_profiles = read_ids()
-    fb = FbBot(transformer = False)
-    user = open_account(fb)   
+    # 1. Load configuration parameters
+    conf_param = json.load(open('./config_scraper.json', 'r'))
+    if conf_param['output']['AZURE']:
+        conf_param_azure = json.load(open('./azure/config_blob.json', 'r'))
+        CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix=core.windows.net'.format(
+                            conf_param_azure['STORAGEACCOUNTNAME'], 
+                            conf_param_azure['STORAGEACCOUNTKEY'])
+        blobs = BlobStorage(CONNECTION_STRING, 
+                            conf_param_azure['CONTAINERNAME'])
+    # 2. Get id profiles from csv file
+    df_profiles = read_ids(conf_param['input']['DIRECT_DOWNLOAD_URL'], 
+                           conf_param['input']['profile_id_column'])
+    # 3. Initiate Scraper bot
+    if conf_param['facebook']['autho_author']:
+        fb = FbBot(transformer = True)
+    else:
+        fb = FbBot(transformer = False)
+    # 4. Open browser session
+    if conf_param['facebook']['open_browser']:
+        user = open_account(fb, True)
+    else:
+        user = open_account(fb)
+    # 5. Scraping iterations paramenters
     iters = 0
     exception_iters  = 0
     start = 11513
     ids = df_profiles.commenter_id.unique()
     start_time =  time.time()
-    for id in tqdm(ids[start:]):
-        try:
-            print("{}: Scraping {} profile".format(iters, id))
-            profile = scrap_profile(user, id)
-            profile["account_id"] = id
-            save_profiles(profile, id)
+
+    #for id in tqdm(ids[start:]):
+    for id in tqdm(ids[:4]):
+        try:            
+            if conf_param['facebook']['download_data']:# Scrap profile data
+                print("{}: Scraping {} profile data".format(iters, id))
+                profile = scrap_profile(user, id, conf_param['output']['ABOUT_URL'])
+                profile["account_id"] = id
+                save_profiles(profile, id, conf_param['output']['LOCAL_FILE'])
+            if conf_param['facebook']['download_image']:# Scrap profile image
+                print("{}: Scraping {} profile image".format(iters, id))
+                image_url = scrap_profile_image(user, id, conf_param['output']['FB_URL'])
+                if conf_param['output']['local']:
+                    if conf_param['output']['AZURE']:
+                        save_profile_image(image_url, id, 
+                                        sink_folder = conf_param_azure["BLOBNAME-IMAGES"],
+                                        file_name = conf_param['output']['OUTPUT_IMAGE'],
+                                        local_path = conf_param['output']['LOCAL_PATH'],
+                                        blobstorage = blobs)
+                    else:
+                        save_profile_image(image_url, id, 
+                                        file_name = conf_param['output']['OUTPUT_IMAGE'],
+                                        local_path = conf_param['output']['LOCAL_PATH'])
+                else:
+                    if conf_param['output']['AZURE']:
+                        save_profile_image(image_url, id, 
+                                        sink_folder = conf_param_azure["BLOBNAME-IMAGES"],
+                                        file_name = conf_param['output']['OUTPUT_IMAGE'],
+                                        blobstorage = blobs)
+
             iters += 1
             exception_iters = 0
             if check_time(start_time, 0.75):

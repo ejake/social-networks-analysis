@@ -2,9 +2,56 @@ from facebook_bot.FbBot import FbBot
 
 import datetime
 from dateparser import parse
-
+from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
+
+# Image profile scraping
+def image_profile_scraper(user, profile): 
+    """
+    Input: Browser session;
+           URL, e.g. 'https://m.facebook.com/100000002175639'
+    Output: Full size profile image (URL)
+    """
+    profile_url = None
+    # First page (Cover)
+    user.get(profile)
+    page = user.page_source
+    soup = BeautifulSoup(page, "html.parser")
+    b = soup.find('div', {'id':'m-timeline-cover-section'})
+    raw_cover_container = b.find('div', class_='_52jj')
+    raw_profile_pic = raw_cover_container.find("div", class_ = '_52jj _42b3')
+    url_profile_pic = raw_profile_pic.find_all("a", href=True) 
+    url_profile_pic[0]['href']
+    # Get URL for profile image page
+    url = urljoin("https://m.facebook.com/", url_profile_pic[0]['href'])
+    
+    # Second page (profile image)
+    user.get(url)
+    page = user.page_source
+    soup = BeautifulSoup(page, "html.parser")
+    b = soup.find('div', {'id':'rootcontainer'})    
+    raw_container = b.find('div', {'id':'MRoot'})
+    if raw_container:
+        raw_container = raw_container.find('div', {'id':'MPhotoUpperContent'})
+        if raw_container:
+            raw_container = raw_container.find('div', class_='atb')
+            if raw_container:
+                raw_container = raw_container.find('span', class_='_2vja mfss fcg')
+                if raw_container:
+                    url_profile_pic_full = raw_container.find_all("a", href=True)
+                    url_profile_pic_full[0]['href']
+                    url = urljoin("https://m.facebook.com/", url_profile_pic_full[0]['href'])
+                    
+                    # Third page (Full size image)
+                    user.get(url)
+                    page = user.page_source
+                    soup = BeautifulSoup(page, "html.parser")
+                    b = soup.find('img')
+                    profile_url = b['src']
+
+    return profile_url
+
 
 # Demographic scraping 
 
