@@ -15,8 +15,8 @@ import re
 import json
 import tqdm
 
-subscription_key = "3d15d6dcd38a4481b760e63b4cfd6992" 
-end_point = "https://cog-vision-dane-modsfc.cognitiveservices.azure.com/"
+subscription_key = "" 
+end_point = ""
 LOCAL_PATH = "/home/administrador/output-facebook/"
 
 def get_id_file(text):
