@@ -1,10 +1,24 @@
 import os
 from azure.storage.blob import BlobServiceClient
 
+# Create a SAS token to use to authenticate a new client
+from datetime import datetime, timedelta
+from azure.storage.blob import ResourceTypes, AccountSasPermissions, generate_account_sas
+
 class BlobStorage:  
   def __init__(self, connection_string, container_name):
-    service_client = BlobServiceClient.from_connection_string(connection_string)
-    self.client = service_client.get_container_client(container_name)
+    self.service_client = BlobServiceClient.from_connection_string(connection_string)
+    self.client = self.service_client.get_container_client(container_name)
+
+  def create_sas_token(self):
+    sas_token = generate_account_sas(
+      self.service_client.account_name,
+      account_key=self.service_client.credential.account_key,
+      resource_types=ResourceTypes(object=True),
+      permission=AccountSasPermissions(read=True),
+      expiry=datetime.utcnow() + timedelta(hours=10)
+      )
+    return sas_token
 
   def upload(self, source, dest):
     '''

@@ -131,7 +131,7 @@ if __name__ == "__main__":
     start_time =  time.time()
 
     #for id in tqdm(ids[start:]):
-    for id in ids[10:20]:
+    for id in ids[100:200]:
         try:            
             if conf_param['facebook']['download_data']:# Scrap profile data
                 print("{}: Scraping {} profile data".format(iters, id))

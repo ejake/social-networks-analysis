@@ -40,5 +40,7 @@ user = fb.FB_account_opener('leodatom','Panama$123', open_browser=True)
 #fb.liking_bot(user)
 
 # Profile images
-link = fbs.image_profile_scraper(user, 'https://m.facebook.com/100000002175639')
+#link = fbs.image_profile_scraper(user, 'https://m.facebook.com/100002422389615')
+#link = fbs.image_profile_scraper(user, 'https://m.facebook.com/651359704')
+link = fbs.image_profile_scraper(user, 'https://m.facebook.com/1113032585')
 print(link)
