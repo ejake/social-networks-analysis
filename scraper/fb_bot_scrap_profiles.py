@@ -26,6 +26,7 @@ def scrap_profile(browser, id, url_prefix):
 
 def scrap_profile_image(browser, id, url_prefix):    
     time.sleep(random.randint(5,45))
+    print("Scraping image from {}".format(url_prefix+id))
     url_image = fbs.image_profile_scraper(browser, url_prefix+id) 
 
     return url_image
@@ -40,7 +41,7 @@ def save_profiles(list_data, id, path_prefix):
         json.dump(list_data, fp)
 
 def save_profile_image(url_pic, id, **kwargs):
-    print(url_pic)
+    print("Saving image: {}".format(url_pic))
     r = requests.get(url_pic, stream = True)
     filename = './temp_image_profile.jpg'
     output_file_name = kwargs['file_name'].format(str(id),
@@ -130,7 +131,7 @@ if __name__ == "__main__":
     start_time =  time.time()
 
     #for id in tqdm(ids[start:]):
-    for id in tqdm(ids[1:10]):
+    for id in ids[10:20]:
         try:            
             if conf_param['facebook']['download_data']:# Scrap profile data
                 print("{}: Scraping {} profile data".format(iters, id))
@@ -140,6 +141,8 @@ if __name__ == "__main__":
             if conf_param['facebook']['download_image']:# Scrap profile image
                 print("{}: Scraping {} profile image".format(iters, id))
                 image_url = scrap_profile_image(user, id, conf_param['facebook']['FB_URL'])
+                if not (image_url):
+                    continue
                 if conf_param['output']['local']:
                     if conf_param['output']['AZURE']:
                         save_profile_image(image_url, id, 
