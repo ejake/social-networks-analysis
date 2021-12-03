@@ -6,8 +6,8 @@
     "output" : {
         "AZURE" : true,
         "local" : true,
-        "LOCAL_PATH" : "/home/administrador/output-facebook/",
-        "LOCAL_FILE" : "/home/administrador/output-facebook/profile_{}_data_{}.json",
+        "LOCAL_PATH" : "E:\\Documents\\Projects\\DANE-UN\\output",
+        "LOCAL_FILE" : "E:\\Documents\\Projects\\DANE-UN\\output\\profile_{}_data_{}.json",
         "OUTPUT_FILE" : "profile_{}_data_{}.json",
         "OUTPUT_IMAGE" : "profile_{}_pic_{}.jpg",
         "OUTPUT_IMAGE_INFER" : "profile_{}_pic_data_by_{}_{}.json"
@@ -16,7 +16,7 @@
         "ABOUT_URL" : "https://m.facebook.com/{}/about",
         "FB_URL" : "https://m.facebook.com/",
         "auto_author" : false,
-        "open_browser" : false,
+        "open_browser" : true,
         "download_image" : true,
         "download_data": false, 
         "timer_hours" : 0
